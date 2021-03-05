@@ -109,7 +109,7 @@ namespace DcsOnboardNumberGenerator
                 return false;
             }
         }
-        public ProcessResults Process(int firstNumber, int lastNumber)
+        public ProcessResults Process(int firstNumber, int lastNumber, out int countModified)
         {
             try
             {
@@ -128,14 +128,18 @@ namespace DcsOnboardNumberGenerator
                 string content = this._Content;
                 content = Regex.Replace(content, pattern, evaluator);
                 this._Content = content;
+
+                countModified = process.CurrentNumber - firstNumber;
                 return ProcessResults.Ok;
             }
             catch (OutOfNumbersException)
             {
+                countModified = 0;
                 return ProcessResults.OutOfNumbers;
             }
             catch
             {
+                countModified = 0;
                 return ProcessResults.Error;
             }
         }

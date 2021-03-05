@@ -11,7 +11,7 @@ namespace DcsOnboardNumberGenerator
     [Serializable]
     public class ConfigXml
     {
-        public static FileInfo Filename {  get { return new FileInfo("config.xml"); } }
+        public static FileInfo Filename {  get { return new FileInfo("DcsOnboardNumberGenerator.xml"); } }
         #region Load/Save
         public static ConfigXml Load(FileInfo fileInfo)
         {

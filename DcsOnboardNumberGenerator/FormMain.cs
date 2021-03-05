@@ -92,10 +92,12 @@ namespace DcsOnboardNumberGenerator
                 {
                     foreach (var filename in dlg.FileNames)
                     {
-                        var result = this.Generate(new FileInfo(filename));
+                        var fileInfo = new FileInfo(filename);
+                        var result = this.Generate(fileInfo, out var countModified);
                         switch (result)
                         {
                             case Mission.ProcessResults.Ok:
+                                MessageBox.Show(this, $"Generated ({countModified}) Onboard-Numbers for mission:\n'{fileInfo.Name}'", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                 break;
                             case Mission.ProcessResults.LoadError:
                                 MessageBox.Show(this, $"Unable to load mission: {filename}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -144,13 +146,16 @@ namespace DcsOnboardNumberGenerator
             string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             return new DirectoryInfo(Path.Combine(userProfile, "Saved Games"));
         }
-        private Mission.ProcessResults Generate(FileInfo fileInfo)
+        private Mission.ProcessResults Generate(FileInfo fileInfo, out int countModified)
         {
             var mission = Mission.LoadFromMiz(fileInfo);
             if (mission == null)
+            {
+                countModified = 0;
                 return Mission.ProcessResults.LoadError;
+            }
 
-            var result = mission.Process((int)this.numFirst.Value, (int)this.numLast.Value);
+            var result = mission.Process((int)this.numFirst.Value, (int)this.numLast.Value, out countModified);
             if (result != Mission.ProcessResults.Ok)
                 return result;
 
